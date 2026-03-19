@@ -1,5 +1,5 @@
 (() => {
-  const DEFAULTS = { bgColor: "#1a1a1a", showBookmarks: false };
+  const DEFAULTS = { bgColor: "#1a1a1a" };
 
   const PRESETS = [
     { color: "#000000", name: "Black" },
@@ -17,7 +17,6 @@
   const $bgColor      = document.getElementById("bgColor");
   const $hexLabel      = document.getElementById("hexLabel");
   const $presets       = document.getElementById("presets");
-  const $showBookmarks = document.getElementById("showBookmarks");
   const $toast         = document.getElementById("toast");
 
   // ── Build preset swatches ──
@@ -49,16 +48,9 @@
     save();
   });
 
-  // ── Toggle event ──
-  $showBookmarks.addEventListener("change", save);
-
   // ── Save ──
   function save() {
-    const data = {
-      bgColor: $bgColor.value,
-      showBookmarks: $showBookmarks.checked,
-    };
-    chrome.storage.sync.set(data, flash);
+    chrome.storage.sync.set({ bgColor: $bgColor.value }, flash);
   }
 
   function flash() {
@@ -71,7 +63,6 @@
   chrome.storage.sync.get(DEFAULTS, (s) => {
     $bgColor.value = s.bgColor;
     $hexLabel.textContent = s.bgColor;
-    $showBookmarks.checked = s.showBookmarks;
     highlightPreset(s.bgColor);
   });
 })();

@@ -3,7 +3,10 @@
   "name": "Blank New Tab",
   "version": "1.0.0",
   "description": "Replace new tabs with a clean, customizable blank page.",
-  "permissions": ["storage", "bookmarks", "favicon"],
+  "permissions": ["storage", "nativeMessaging", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },

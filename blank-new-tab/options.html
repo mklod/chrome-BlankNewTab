@@ -142,54 +142,6 @@
       box-shadow: 0 0 0 2px var(--accent-glow);
     }
 
-    /* ── Toggle switch ── */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      transition: border-color 0.2s;
-    }
-    .toggle-row:hover { border-color: rgba(110,110,255,0.35); }
-    .toggle-text .label { font-size: 13px; font-weight: 500; }
-    .toggle-text .hint  { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-
-    .switch {
-      position: relative;
-      width: 42px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      inset: 0;
-      background: var(--border);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.25s;
-    }
-    .slider::before {
-      content: '';
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      left: 3px;
-      top: 3px;
-      background: var(--text);
-      border-radius: 50%;
-      transition: transform 0.25s;
-    }
-    .switch input:checked + .slider {
-      background: var(--accent);
-    }
-    .switch input:checked + .slider::before {
-      transform: translateX(18px);
-    }
-
     /* ── Saved toast ── */
     .toast {
       position: fixed;
@@ -260,25 +212,13 @@
     <div class="presets" id="presets"></div>
   </div>
 
-  <!-- Bookmarks bar -->
+  <!-- Bookmarks bar info -->
   <div class="section">
     <div class="section-label">Bookmarks Bar</div>
-    <div class="toggle-row">
-      <div class="toggle-text">
-        <div class="label">Show bookmarks bar</div>
-        <div class="hint">On new tab pages only</div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="showBookmarks">
-        <span class="slider"></span>
-      </label>
-    </div>
     <div class="shortcut-hint">
-      Chrome controls the bookmarks bar natively.<br>
-      Toggle it with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>
-      (or <kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> on Mac).
-      <br>This setting saves your preference so you can
-      remember which state you chose.
+      The native bookmarks bar auto-shows on new tabs and
+      hides when you navigate away. Requires the native host
+      to be installed (see install.bat in native-host folder).
     </div>
   </div>
 

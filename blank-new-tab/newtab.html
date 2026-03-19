@@ -10,141 +10,16 @@
       width: 100%;
       height: 100%;
     }
-
-    #bookmarks-bar {
-      display: none;
-      padding: 6px 12px;
-      font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-      font-size: 13px;
-      overflow: hidden;
-      white-space: nowrap;
-      background: rgba(0,0,0,0.15);
-    }
-    #bookmarks-bar.visible { display: flex; gap: 4px; align-items: center; }
-
-    #bookmarks-bar a, #bookmarks-bar .folder {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.15s;
-      flex-shrink: 0;
-    }
-
-    /* Overflow chevron */
-    #overflow-wrap {
-      position: relative;
-      flex-shrink: 0;
-      margin-left: auto;
-      display: none;
-    }
-    #overflow-wrap.visible { display: inline-block; }
-    #overflow-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 10px;
-      border-radius: 6px;
-      color: rgba(255,255,255,0.85);
-      cursor: pointer;
-      transition: background 0.15s;
-      font-size: 13px;
-      background: none;
-      border: none;
-      font-family: inherit;
-    }
-    #overflow-btn:hover { background: rgba(255,255,255,0.1); }
-    #overflow-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 4px;
-      background: #2a2a2e;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px;
-      padding: 4px 0;
-      min-width: 200px;
-      max-height: 70vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      z-index: 100;
-    }
-    #overflow-wrap:hover > #overflow-dropdown { display: block; }
-    #overflow-dropdown a, #overflow-dropdown .overflow-folder-label {
-      display: flex;
-      padding: 6px 12px;
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      font-size: 13px;
-      gap: 8px;
-      align-items: center;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    #overflow-dropdown a:hover, #overflow-dropdown .overflow-folder-label:hover {
-      background: rgba(255,255,255,0.08);
-    }
-    #overflow-dropdown img { width: 16px; height: 16px; flex-shrink: 0; }
-    #bookmarks-bar a:hover, #bookmarks-bar .folder:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    #bookmarks-bar img {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-    #bookmarks-bar .folder-icon {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-      opacity: 0.7;
-    }
-
-    /* Folder dropdown */
-    .folder-wrap {
-      position: relative;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .folder-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      margin-top: 4px;
-      background: #2a2a2e;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px;
-      padding: 4px 0;
-      min-width: 180px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      z-index: 100;
-      white-space: normal;
-    }
-    .folder-wrap:hover > .folder-dropdown { display: block; }
-    .folder-dropdown a {
-      display: flex;
-      padding: 6px 12px;
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      font-size: 13px;
-      gap: 8px;
-      align-items: center;
-      border-radius: 0;
-      white-space: nowrap;
-    }
-    .folder-dropdown a:hover { background: rgba(255,255,255,0.08); }
-    .folder-dropdown img { width: 16px; height: 16px; flex-shrink: 0; }
   </style>
+  <script>
+    // Instant bg color from cache before async storage call
+    (function() {
+      var s = localStorage.getItem("bgColor");
+      if (s) document.documentElement.style.backgroundColor = s;
+    })();
+  </script>
 </head>
 <body>
-  <div id="bookmarks-bar">
-    <div id="overflow-wrap"><button id="overflow-btn">»</button><div id="overflow-dropdown"></div></div>
-  </div>
   <script src="newtab.js"></script>
 </body>
 </html>
