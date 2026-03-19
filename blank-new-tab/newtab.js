@@ -1,4 +1,4 @@
-// Last modified: 2026-03-18--1200
+// Last modified: 2026-03-18--1430
 (() => {
   const DEFAULTS = { bgColor: "#1a1a1a", showBookmarks: false };
 
@@ -19,22 +19,78 @@
     }
   }
 
+  let allBookmarkNodes = [];
+
   function renderBookmarks() {
     const bar = document.getElementById("bookmarks-bar");
     bar.classList.add("visible");
 
-    // Bookmarks bar is typically the first child of the root
     chrome.bookmarks.getTree((tree) => {
       const roots = tree[0].children;
-      // Usually: [0] = Bookmarks Bar, [1] = Other Bookmarks
       const bookmarksBar = roots[0];
       if (!bookmarksBar || !bookmarksBar.children) return;
 
-      bookmarksBar.children.forEach((node) => {
-        bar.appendChild(buildNode(node));
-      });
+      allBookmarkNodes = bookmarksBar.children.map((node) => buildNode(node));
+      allBookmarkNodes.forEach((el) => bar.insertBefore(el, document.getElementById("overflow-wrap")));
+      updateOverflow();
     });
   }
+
+  function updateOverflow() {
+    const bar = document.getElementById("bookmarks-bar");
+    const overflowWrap = document.getElementById("overflow-wrap");
+    const overflowDropdown = document.getElementById("overflow-dropdown");
+
+    // Reset: show all items
+    allBookmarkNodes.forEach((el) => { el.style.display = ""; });
+    overflowWrap.classList.remove("visible");
+    overflowDropdown.innerHTML = "";
+
+    // Available width = bar width minus padding minus overflow button reserved space
+    const barRect = bar.getBoundingClientRect();
+    const barPadding = 24; // 12px each side
+    const overflowBtnWidth = 44; // approximate width of » button
+    const availableWidth = barRect.width - barPadding;
+
+    // Measure which items fit
+    let usedWidth = 0;
+    let firstOverflowIdx = -1;
+    for (let i = 0; i < allBookmarkNodes.length; i++) {
+      const el = allBookmarkNodes[i];
+      const w = el.getBoundingClientRect().width + 4; // 4px gap
+      if (firstOverflowIdx === -1 && usedWidth + w > availableWidth - overflowBtnWidth) {
+        // Check if everything fits without the overflow button
+        let totalW = usedWidth + w;
+        let allFit = true;
+        for (let j = i + 1; j < allBookmarkNodes.length; j++) {
+          totalW += allBookmarkNodes[j].getBoundingClientRect().width + 4;
+        }
+        if (totalW <= availableWidth) {
+          usedWidth += w;
+          continue;
+        }
+        firstOverflowIdx = i;
+      }
+      if (firstOverflowIdx !== -1 && i >= firstOverflowIdx) {
+        // This doesn't fit
+      } else {
+        usedWidth += w;
+      }
+    }
+
+    if (firstOverflowIdx === -1) return; // everything fits
+
+    // Hide overflowed items, clone them into the dropdown
+    overflowWrap.classList.add("visible");
+    for (let i = firstOverflowIdx; i < allBookmarkNodes.length; i++) {
+      allBookmarkNodes[i].style.display = "none";
+      const clone = allBookmarkNodes[i].cloneNode(true);
+      clone.style.display = "";
+      overflowDropdown.appendChild(clone);
+    }
+  }
+
+  window.addEventListener("resize", updateOverflow);
 
   function buildNode(node) {
     if (node.url) {
