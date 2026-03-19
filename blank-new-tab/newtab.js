@@ -1,11 +1,13 @@
-// Last modified: 2026-03-18--1430
+// Last modified: 2026-03-18--1500
 (() => {
   const DEFAULTS = { bgColor: "#1a1a1a", showBookmarks: false };
+  const CACHE_KEY = "bookmarksBarCache";
 
   chrome.storage.sync.get(DEFAULTS, (settings) => {
     document.body.style.backgroundColor = settings.bgColor;
 
     if (settings.showBookmarks) {
+      restoreCachedBar();
       renderBookmarks();
     }
   });
@@ -13,9 +15,25 @@
   function faviconUrl(pageUrl) {
     try {
       const u = new URL(pageUrl);
-      return "https://www.google.com/s2/favicons?sz=32&domain=" + u.hostname;
+      return "chrome-extension://" + chrome.runtime.id + "/_favicon/?pageUrl=" + encodeURIComponent(u.origin) + "&size=32";
     } catch {
       return "";
+    }
+  }
+
+  // Instantly restore cached HTML so bar appears before API call completes
+  function restoreCachedBar() {
+    const bar = document.getElementById("bookmarks-bar");
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      bar.classList.add("visible");
+      // Insert cached items before the overflow-wrap
+      const overflowWrap = document.getElementById("overflow-wrap");
+      const temp = document.createElement("div");
+      temp.innerHTML = cached;
+      while (temp.firstChild) {
+        bar.insertBefore(temp.firstChild, overflowWrap);
+      }
     }
   }
 
@@ -23,16 +41,26 @@
 
   function renderBookmarks() {
     const bar = document.getElementById("bookmarks-bar");
-    bar.classList.add("visible");
 
     chrome.bookmarks.getTree((tree) => {
       const roots = tree[0].children;
       const bookmarksBar = roots[0];
       if (!bookmarksBar || !bookmarksBar.children) return;
 
+      // Clear any cached nodes (they'll be replaced with fresh ones)
+      const overflowWrap = document.getElementById("overflow-wrap");
+      while (bar.firstChild && bar.firstChild !== overflowWrap) {
+        bar.removeChild(bar.firstChild);
+      }
+
+      bar.classList.add("visible");
       allBookmarkNodes = bookmarksBar.children.map((node) => buildNode(node));
-      allBookmarkNodes.forEach((el) => bar.insertBefore(el, document.getElementById("overflow-wrap")));
+      allBookmarkNodes.forEach((el) => bar.insertBefore(el, overflowWrap));
       updateOverflow();
+
+      // Cache the rendered HTML for instant restore next time
+      const html = allBookmarkNodes.map((el) => el.outerHTML).join("");
+      localStorage.setItem(CACHE_KEY, html);
     });
   }
 
@@ -46,10 +74,9 @@
     overflowWrap.classList.remove("visible");
     overflowDropdown.innerHTML = "";
 
-    // Available width = bar width minus padding minus overflow button reserved space
     const barRect = bar.getBoundingClientRect();
-    const barPadding = 24; // 12px each side
-    const overflowBtnWidth = 44; // approximate width of » button
+    const barPadding = 24;
+    const overflowBtnWidth = 44;
     const availableWidth = barRect.width - barPadding;
 
     // Measure which items fit
@@ -57,11 +84,9 @@
     let firstOverflowIdx = -1;
     for (let i = 0; i < allBookmarkNodes.length; i++) {
       const el = allBookmarkNodes[i];
-      const w = el.getBoundingClientRect().width + 4; // 4px gap
+      const w = el.getBoundingClientRect().width + 4;
       if (firstOverflowIdx === -1 && usedWidth + w > availableWidth - overflowBtnWidth) {
-        // Check if everything fits without the overflow button
         let totalW = usedWidth + w;
-        let allFit = true;
         for (let j = i + 1; j < allBookmarkNodes.length; j++) {
           totalW += allBookmarkNodes[j].getBoundingClientRect().width + 4;
         }
@@ -72,15 +97,14 @@
         firstOverflowIdx = i;
       }
       if (firstOverflowIdx !== -1 && i >= firstOverflowIdx) {
-        // This doesn't fit
+        // doesn't fit
       } else {
         usedWidth += w;
       }
     }
 
-    if (firstOverflowIdx === -1) return; // everything fits
+    if (firstOverflowIdx === -1) return;
 
-    // Hide overflowed items, clone them into the dropdown
     overflowWrap.classList.add("visible");
     for (let i = firstOverflowIdx; i < allBookmarkNodes.length; i++) {
       allBookmarkNodes[i].style.display = "none";
@@ -94,7 +118,6 @@
 
   function buildNode(node) {
     if (node.url) {
-      // It's a bookmark link
       const a = document.createElement("a");
       a.href = node.url;
       a.title = node.title || node.url;
@@ -107,7 +130,6 @@
       a.appendChild(span);
       return a;
     } else {
-      // It's a folder
       const wrap = document.createElement("div");
       wrap.className = "folder-wrap";
 
