@@ -117,6 +117,69 @@
       font-family: 'DM Sans', monospace;
     }
 
+    /* ── RGB inputs ── */
+    .rgb-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .rgb-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .rgb-field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-align: center;
+    }
+    .rgb-field input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', monospace;
+      font-size: 13px;
+      padding: 6px 8px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .rgb-field input:focus {
+      border-color: var(--accent);
+    }
+
+    /* ── Hex input ── */
+    .hex-row {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hex-row label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+    .hex-row input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'DM Sans', monospace;
+      font-size: 13px;
+      padding: 6px 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .hex-row input:focus {
+      border-color: var(--accent);
+    }
+
     /* ── Presets ── */
     .presets {
       display: flex;
@@ -162,27 +225,6 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
-    /* ── Shortcut hint ── */
-    .shortcut-hint {
-      margin-top: 8px;
-      padding: 10px 12px;
-      background: rgba(110,110,255,0.06);
-      border: 1px dashed rgba(110,110,255,0.2);
-      border-radius: 8px;
-      font-size: 11px;
-      color: var(--text-dim);
-      line-height: 1.5;
-    }
-    .shortcut-hint kbd {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1px 5px;
-      font-size: 10px;
-      font-family: inherit;
-      color: var(--text);
-    }
   </style>
 </head>
 <body>
@@ -209,17 +251,28 @@
         <span class="color-hex" id="hexLabel">#1a1a1a</span>
       </div>
     </div>
-    <div class="presets" id="presets"></div>
-  </div>
 
-  <!-- Bookmarks bar info -->
-  <div class="section">
-    <div class="section-label">Bookmarks Bar</div>
-    <div class="shortcut-hint">
-      The native bookmarks bar auto-shows on new tabs and
-      hides when you navigate away. Requires the native host
-      to be installed (see install.bat in native-host folder).
+    <div class="rgb-row">
+      <div class="rgb-field">
+        <label>R</label>
+        <input type="number" id="rgbR" min="0" max="255" value="26">
+      </div>
+      <div class="rgb-field">
+        <label>G</label>
+        <input type="number" id="rgbG" min="0" max="255" value="26">
+      </div>
+      <div class="rgb-field">
+        <label>B</label>
+        <input type="number" id="rgbB" min="0" max="255" value="26">
+      </div>
     </div>
+
+    <div class="hex-row">
+      <label>HEX</label>
+      <input type="text" id="hexInput" value="#1a1a1a" maxlength="7" spellcheck="false">
+    </div>
+
+    <div class="presets" id="presets"></div>
   </div>
 
   <div class="toast" id="toast">Saved</div>

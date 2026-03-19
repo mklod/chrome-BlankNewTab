@@ -12,11 +12,8 @@
     }
   </style>
   <script>
-    // Instant bg color from cache before async storage call
-    (function() {
-      var s = localStorage.getItem("bgColor");
-      if (s) document.documentElement.style.backgroundColor = s;
-    })();
+    var s = localStorage.getItem("bgColor");
+    if (s) document.documentElement.style.backgroundColor = s;
   </script>
 </head>
 <body>

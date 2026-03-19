@@ -1,9 +1,7 @@
-// Last modified: 2026-03-18--1545
+// Last modified: 2026-03-19--0200
 (() => {
-  const DEFAULTS = { bgColor: "#1a1a1a" };
-
-  chrome.storage.sync.get(DEFAULTS, (settings) => {
-    document.body.style.backgroundColor = settings.bgColor;
-    localStorage.setItem("bgColor", settings.bgColor);
+  chrome.storage.sync.get({ bgColor: "#1a1a1a" }, (s) => {
+    document.body.style.backgroundColor = s.bgColor;
+    localStorage.setItem("bgColor", s.bgColor);
   });
 })();
